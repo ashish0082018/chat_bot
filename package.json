@@ -1,0 +1,19 @@
+{
+  "name": "chat_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rag.js",
+  "type": "module",
+  "scripts": {
+    "start": "node rag.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@langchain/community": "^0.3.53",
+    "@langchain/core": "^0.3.72",
+    "@langchain/textsplitters": "^0.1.0",
+    "pdf-parse": "^1.1.1"
+  }
+}
