@@ -1,5 +1,25 @@
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";  // you can upload the data from any where  , right now it is upload form the fs/pdf , direct pdf dal rhe h h
-import { CharacterTextSplitter } from "@langchain/textsplitters";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { CohereEmbeddings } from "@langchain/cohere";
+import { PineconeStore } from "@langchain/pinecone";
+import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
+
+const embeddings = new CohereEmbeddings({
+  model: "embed-english-v3.0",
+  apiKey:process.env.COHERE_API_KEY
+});
+
+
+// Store in vector database
+const pinecone = new PineconeClient({apiKey:process.env.PINECONE_API_KEY});
+const pineconeIndex=pinecone.Index(process.env.PINECONE_INDEX_NAME)
+const vectorStore = new PineconeStore(embeddings, {
+  pineconeIndex,
+  maxConcurrency: 5,
+});
+
+
+
 
 export async function indexTheDocument(filePath){
   //const loader = new PDFLoader(filePath); // it will divide each page of pdf in one object , abhi 4 object milega , each of 1 page 
@@ -21,12 +41,13 @@ Length-based: splits by fixed size (characters or tokens).
 Text/Document-structured: splits by paragraphs, headers, or code blocks.  --- we use this one
 Semantic-based: splits where meaning changes, keeping chunks coherent.
 */
-const textSplitter = new CharacterTextSplitter({
+const textSplitter = new RecursiveCharacterTextSplitter({
   chunkSize: 500,
   chunkOverlap: 100,   // two paragraph mai , pahale wlae ka last kuch words , aur second para ke starting ke kuch text wo same hoga , isse hoga ye ki related para ko acche se samjh payega llm 
 });
-const texts = await textSplitter.splitText(docs[0].pageContent);  // dhyan se text ko pass krna h 
+const texts = await textSplitter.splitText(doc[0].pageContent);  // Text should be pass i.e doc[0].pageContent
+  console.log(texts);
   
-
+//3) Make embedding of the chunked text , link->  https://js.langchain.com/docs/integrations/vectorstores/
 
 }
